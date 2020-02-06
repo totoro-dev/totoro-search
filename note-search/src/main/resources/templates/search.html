@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+
+<button onclick="search('vue')">搜索</button>
+
+<p id="result"></p>
+
+<script>
+    function search(key) {
+        var data = {
+            'key':key
+        }
+        $.ajax({
+            url:'http://117.48.227.18:8082/search',
+            dataType:'json',
+            type:'POST',
+            data:{
+                'data':JSON.stringify(data)
+            },
+            success:function (data) {
+                console.log(data.urls[0]);
+            }
+        })
+    }
+</script>
+</body>
+</html>

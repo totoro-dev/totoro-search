@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" th:src="@{/js/jquery-3.1.1.min.js}"></script>
+    <title>笔记搜索引擎-后台管理</title>
+    <style>
+        .edit{
+            width: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="login">
+    <div class="row clearfix"><br><br>
+        <div style="margin: 0 auto; text-align: center;">
+            <input id="name" type="text" placeholder="管理员" style="width: 20em;"/><br>
+            <input id="pwd" type="password" placeholder="密码" style="width: 20em;margin-top: 10px;"/><br>
+            <button id="up" style="width: 10em;margin-top: 10px;">登录后台</button>
+        </div>
+    </div>
+</div>
+<div id="admin" style="margin-top: 50px; display: none;">
+
+    <div class="container">
+        <div class="row">
+            <div style="margin: 0 auto; text-align: center;">
+                <button id="changeMaxResult" style="margin-left: -40px;margin-bottom: 5px;">修改</button> 最大返回结果数量<br/>
+                <input type="text" id="maxResult" class="edit"/><br/>
+                <input type="text" id="title" class="edit" placeholder="标题"/><br/>
+                <textarea type="text" rows="3"id="note" class="edit" placeholder="简介"></textarea><br/>
+                <input type="text" id="url" class="edit" placeholder="链接"/><br/>
+                <div style="margin-top: 20px;">
+                    <button id="submit">提交索引</button><button id="shutdown" style="margin-left: 50px;">停止服务</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 登录
+    function up() {
+        var name = $("#name").val();
+        var pwd = $("#pwd").val();
+        var data = {
+            'name': name,
+            'pwd': pwd
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'loginUp',
+            dataType: 'json',
+            data: {
+                'up': JSON.stringify(data)
+            },
+            success: function (data) {
+                if (data.isAdmin == "true") {
+                    $("#login").css("display", "none");
+                    $("#admin").css("display", "block");
+                    $("#maxResult").val(data.maxResult);
+                }
+            }
+        })
+    }
+
+    function changeMaxResult(max) {
+        var data = {
+            'max':max
+        }
+        $.ajax({
+            type:'POST',
+            url:'/changeMaxResult',
+            data:{
+                'data':JSON.stringify(data)
+            },
+            dataType:'json',
+        })
+    }
+
+    function submit() {
+        var title = $("#title").val();
+        var note = $("#note").val();
+        var url = $("#url").val();
+        var data = {
+            'title':title,
+            'note':note,
+            'url':url
+        }
+        $.ajax({
+            url:'/submit',
+            type:'POST',
+            data:{
+                'link':JSON.stringify(data)
+            },
+            dataType:'json',
+            success:function (data) {
+                console.log("success")
+            }
+        })
+    }
+
+    $("#changeMaxResult").click(function () {
+        var max = $("#maxResult").val();
+        changeMaxResult(max);
+    })
+
+    $("#submit").click(function () {
+        submit();
+    })
+
+    $("#up").click(function () {
+        up();
+    })
+    $("#shutdown").click(function () {
+        shutdown();
+    })
+</script>
+</body>
+</html>
